@@ -906,18 +906,9 @@ class Game:
         deadzone = 0.25
 
         # 左右: 左スティックX or D-PadX
-        axis_x = 0.0
-        try:
-            axis_x = float(self.joy.get_axis(0))
-        except Exception:
-            axis_x = 0.0
-        hat_x = 0
-        try:
-            # 多くのパッドで HAT は (x, y)
-            hx, hy = self.joy.get_hat(0)
-            hat_x = hx
-        except Exception:
-            hat_x = 0
+        axis_x = self._joy_axis(0)
+        hx, hy = self._joy_hat0()
+        hat_x = hx
 
         pad_vx = 0
         if abs(axis_x) >= deadzone:
@@ -929,13 +920,8 @@ class Game:
         if self.player.vx == 0 and pad_vx != 0:
             self.player.vx = max(-PLAYER_SPEED, min(PLAYER_SPEED, pad_vx))
 
-        # ジャンプ: ×/A/南ボタン（環境差を吸収）
-        def _btn(i: int) -> bool:
-            try:
-                return bool(self.joy.get_button(i))
-            except Exception:
-                return False
-        jump_pressed = _btn(0) or _btn(1) or _btn(2)
+        # ジャンプ（0/1/2 のどれか）
+        jump_pressed = self._joy_button(0) or self._joy_button(1) or self._joy_button(2)
         if jump_pressed and not self.pad_jump_prev:
             self.player.try_jump()
         self.pad_jump_prev = bool(jump_pressed)
@@ -946,55 +932,22 @@ class Game:
     def _update_gamepad_pause_toggle(self):
         if not self.joy:
             return
-        def _btn(i: int) -> bool:
-            try:
-                return bool(self.joy.get_button(i))
-            except Exception:
-                return False
         # OPTIONS/START/中央ボタン候補
-        paused_btn = _btn(7) or _btn(8) or _btn(9) or _btn(10)
+        paused_btn = self._joy_button(7) or self._joy_button(8) or self._joy_button(9) or self._joy_button(10)
         if paused_btn and not self.pause_was_down:
             self.pause = not self.pause
             if AUDIO:
                 AUDIO.play_pause()
         self.pause_was_down = paused_btn
 
-    def _select_joystick(self):
-        pygame.joystick.init()
-        self.joys = []
-        for i in range(pygame.joystick.get_count()):
-            try:
-                j = pygame.joystick.Joystick(i)
-                j.init()
-                self.joys.append(j)
-            except Exception:
-                pass
-        # 優先: DualShock/PS/SONY を名前に含むもの
-        preferred = None
-        for idx, j in enumerate(self.joys):
-            name = (j.get_name() or "").lower()
-            if any(k in name for k in ["dualshock", "dual sense", "dualsense", "ps4", "ps5", "sony", "wireless controller"]):
-                preferred = idx
-                break
-        if preferred is None and self.joys:
-            preferred = 0
-        self.joy_idx = preferred
-        self.joy = self.joys[preferred] if preferred is not None else None
-
     def _apply_global_gamepad_inputs(self, dt: float):
         if not self.joy:
             return
-        def _btn(i: int) -> bool:
-            try:
-                return bool(self.joy.get_button(i))
-            except Exception:
-                return False
-
         # 候補ボタン
-        btn_options = _btn(7) or _btn(9)  # 環境差を吸収
-        btn_share = _btn(8) or _btn(6)
-        btn_l1 = _btn(4)
-        btn_r1 = _btn(5)
+        btn_options = self._joy_button(7) or self._joy_button(9)
+        btn_share = self._joy_button(8) or self._joy_button(6)
+        btn_l1 = self._joy_button(4)
+        btn_r1 = self._joy_button(5)
 
         # 1) Options長押し
         if btn_options:
@@ -1024,7 +977,7 @@ class Game:
             self.pad_quit_hold_combo = 0.0
 
         # 決定（短押し）
-        confirm = _btn(0) or _btn(1) or _btn(2) or btn_options
+        confirm = self._joy_button(0) or self._joy_button(1) or self._joy_button(2) or btn_options
         if confirm and not self.pad_confirm_prev:
             if self.scene == "title":
                 self.scene = "play"
@@ -1036,6 +989,33 @@ class Game:
                 if AUDIO:
                     AUDIO.play_pause()
         self.pad_confirm_prev = confirm
+
+    def _joy_button(self, index: int) -> bool:
+        if not self.joy:
+            return False
+        try:
+            count = self.joy.get_numbuttons()
+            return bool(self.joy.get_button(index)) if 0 <= index < count else False
+        except Exception:
+            return False
+
+    def _joy_axis(self, index: int) -> float:
+        if not self.joy:
+            return 0.0
+        try:
+            count = self.joy.get_numaxes()
+            return float(self.joy.get_axis(index)) if 0 <= index < count else 0.0
+        except Exception:
+            return 0.0
+
+    def _joy_hat0(self) -> tuple[int, int]:
+        if not self.joy:
+            return (0, 0)
+        try:
+            hats = self.joy.get_numhats()
+            return self.joy.get_hat(0) if hats > 0 else (0, 0)
+        except Exception:
+            return (0, 0)
 
 
 if __name__ == "__main__":
