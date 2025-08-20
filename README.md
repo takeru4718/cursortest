@@ -6,7 +6,7 @@
 - Python環境なしで遊べます。以下から `.exe` をダウンロードして実行してください。
 - SmartScreen が出た場合は「詳細情報 > 実行」を選択してください。
 
-[Windows用実行ファイルをダウンロード（JumpSmile.exe）](https://github.com/takeru4718/main/releases/latest/download/JumpSmile.exe)
+[Windows用実行ファイルをダウンロード（JumpSmile.exe）](https://github.com/takeru4718/cursortest/releases/latest/download/JumpSmile.exe)
 
 - 上記はテンプレートURLです。GitHub Releases に `JumpSmile.exe` をアップロードすると有効になります。
   - 例: `https://github.com/<ユーザー名>/<リポジトリ名>/releases/latest/download/JumpSmile.exe`
