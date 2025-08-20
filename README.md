@@ -2,6 +2,16 @@
 
 かわいい横スクロールアクション。全4ステージ、各ステージ最後にボス戦。低年齢でも遊べるやさしめ設計です。
 
+## ダウンロード（Windows .exe）
+- Python環境なしで遊べます。以下から `.exe` をダウンロードして実行してください。
+- SmartScreen が出た場合は「詳細情報 > 実行」を選択してください。
+
+[Windows用実行ファイルをダウンロード（JumpSmile.exe）](https://github.com/OWNER/REPO/releases/latest/download/JumpSmile.exe)
+
+- 上記はテンプレートURLです。GitHub Releases に `JumpSmile.exe` をアップロードすると有効になります。
+  - 例: `https://github.com/<ユーザー名>/<リポジトリ名>/releases/latest/download/JumpSmile.exe`
+  - 手順: GitHub > Releases > Draft a new release > `JumpSmile.exe` を添付して Publish
+
 ## 特徴
 - 4ステージ構成の横スクロール
 - ジャンプ主体（コヨーテタイム＋二段ジャンプ対応）
