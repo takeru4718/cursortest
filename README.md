@@ -2,15 +2,13 @@
 
 かわいい横スクロールアクション。全4ステージ、各ステージ最後にボス戦。低年齢でも遊べるやさしめ設計です。
 
-## ダウンロード（Windows .exe）
-- Python環境なしで遊べます。以下から `.exe` をダウンロードして実行してください。
+## ダウンロード（Windows .zip）
+- Python環境なしで遊べます。以下から `JumpSmile.zip` をダウンロードして解凍後、`JumpSmile.exe` を実行してください。
 - SmartScreen が出た場合は「詳細情報 > 実行」を選択してください。
 
-[Windows用実行ファイルをダウンロード（JumpSmile.exe）](https://github.com/takeru4718/cursortest/releases/latest/download/JumpSmile.exe)
+[Windows用ZIPをダウンロード（JumpSmile.zip）](https://github.com/takeru4718/cursortest/releases/latest/download/JumpSmile.zip)
 
-- 上記はテンプレートURLです。GitHub Releases に `JumpSmile.exe` をアップロードすると有効になります。
-  - 例: `https://github.com/<ユーザー名>/<リポジトリ名>/releases/latest/download/JumpSmile.exe`
-  - 手順: GitHub > Releases > Draft a new release > `JumpSmile.exe` を添付して Publish
+- 上記はGitHub Releasesの最新アセットを指します。ファイル名を変更した場合はリンク名も合わせて更新してください。
 
 ## 特徴
 - 4ステージ構成の横スクロール
@@ -41,20 +39,19 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## 配布（exe 単体配布）
-PyInstaller の onefile ビルドで `dist/JumpSmile.exe` を配布すれば、相手は環境構築なしで遊べます。
+## 配布（onedir 配布）
+PyInstaller の onedir ビルドで `dist/JumpSmile/` をzip化して配布すると、誤検知が起きにくく安定します。
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 pip install pyinstaller
-pyinstaller --name "JumpSmile" --onefile --noconsole --clean main.py
-# うまく動かない時は pygame の収集を追加
-pyinstaller --name "JumpSmile" --onefile --noconsole --clean main.py ^
-  --collect-submodules pygame --collect-data pygame
+pyinstaller --name "JumpSmile" --onedir --noconsole --clean main.py `
+  --collect-submodules pygame `
+  --collect-data pygame
+# dist\JumpSmile\ を zip 化して公開
 ```
-- 配布物: `dist/JumpSmile.exe`
-- SmartScreen が表示される場合があります（未署名のため）。配布先で「詳細情報」→「実行」。
-- 誤検知が気になる場合は `--onedir` でフォルダごと配布も可。
+- 配布物例: `JumpSmile.zip`（解凍して `JumpSmile.exe` を実行）
+- onefile（単体exe）で検知が強い場合、onedir配布を推奨
 
 ## 主な変更点（実装メモ）
 - 日本語フォント自動検出（Noto/Meiryo/游ゴシック/IPA等）
